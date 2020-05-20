@@ -27,21 +27,21 @@ public class Model {
 		disponibili = new HashSet<>(podao.getBlackout(nerc));
 		worstPersone = 0;
 		
-		cerca(parziale, 0, disponibili, anni, ore);
+		cerca(parziale, 0, anni, ore);
 		
 		return worstCase;
 		
 	}
 
-	private void cerca(Set<Blackout> parziale, int livello, Set<Blackout> disponibili, int anni, int ore) {
+	private void cerca(Set<Blackout> parziale, int livello, int anni, int ore) {
 		
-		if(livello==anni) {
+		/*if(livello==anni) {
 			if(calcolaWorstPersone(parziale)>worstPersone && isValida(parziale,anni, ore)) {
 				worstCase = new HashSet(parziale);
 				worstPersone=calcolaWorstPersone(parziale);
 			}
 			return;
-		}
+		}*/
 		
 		if(parziale!=null && isValida(parziale, anni, ore) && calcolaWorstPersone(parziale)>worstPersone) {
 			worstCase = new HashSet(parziale);
@@ -50,21 +50,17 @@ public class Model {
 		
 		for(Blackout b: disponibili) {
 			if(b.getPeopleAffected()!=0) {
-				if(isValida(parziale, anni, ore)) {
+				if(!parziale.contains(b)) {
 					parziale.add(b);
-					Set<Blackout>rimanenti = new HashSet<>(disponibili);
-					rimanenti.remove(b);
 					
-					cerca(parziale, livello+1, rimanenti, anni, ore);
-					parziale.remove(b);
-					
-					cerca(parziale, livello+1, rimanenti, anni, ore);
-					
+					if(isValida(parziale, anni, ore)) {
+						cerca(parziale, livello+1, anni, ore);
+					}
+
 				}
-				
 			}
 		}
-		
+
 		
 		
 	}
